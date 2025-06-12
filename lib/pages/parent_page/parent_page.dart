@@ -53,7 +53,6 @@ class _ParentPageState extends State<ParentPage> {
       // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentPage,
-        showUnselectedLabels: false,
         onTap: (value) {
           setState(() {
             currentPage = value;
@@ -61,6 +60,7 @@ class _ParentPageState extends State<ParentPage> {
         },
         items: [
           BottomNavigationBarItem(
+            backgroundColor: Colors.white,
             icon: Icon(
               currentPage == 0 ? Icons.home : Icons.home_outlined,
             ),
@@ -68,7 +68,7 @@ class _ParentPageState extends State<ParentPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              currentPage == 1 ? Icons.home : Icons.home_outlined,
+              currentPage == 1 ? Icons.layers : Icons.layers_outlined,
             ),
             label: "Categories",
           ),

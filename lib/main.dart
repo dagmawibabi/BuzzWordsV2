@@ -29,6 +29,9 @@ class _MyAppState extends State<MyApp> {
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.white,
           selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: true,
+          showUnselectedLabels: false,
         ),
       ),
     );
