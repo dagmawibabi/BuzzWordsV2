@@ -1,4 +1,6 @@
 import 'package:bwv2/constants/sample_words.dart';
+import 'package:bwv2/pages/components/word_card.dart';
+import 'package:bwv2/pages/definition_page/definition_page.dart';
 import 'package:flutter/material.dart';
 
 class AlphabetWordlist extends StatefulWidget {
@@ -68,121 +70,9 @@ class _AlphabetWordlistState extends State<AlphabetWordlist> {
                     .toLowerCase()
                     .contains(searchController.text.toLowerCase());
                 return searchController.text.trim().length <= 0
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 5.0,
-                          horizontal: 10.0,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                            left: 15.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.yellowAccent.withAlpha(30),
-                            border: Border.all(
-                              color: Colors.orange,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    words[index]["word"],
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    'by: ${words[index]['submittedBy']}',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${DateTime.parse(words[index]['dateTime'].toString()).day} • ${DateTime.parse(words[index]['dateTime'].toString()).month} • ${DateTime.parse(words[index]['dateTime'].toString()).year}',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.chevron_right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
+                    ? WordCard(word: words[index])
                     : isSearchMatch
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 5.0,
-                              horizontal: 10.0,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                top: 10.0,
-                                bottom: 10.0,
-                                left: 15.0,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.yellowAccent.withAlpha(30),
-                                border: Border.all(
-                                  color: Colors.orange,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        words[index]["word"],
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'by: ${words[index]['submittedBy']}',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${DateTime.parse(words[index]['dateTime'].toString()).day} • ${DateTime.parse(words[index]['dateTime'].toString()).month} • ${DateTime.parse(words[index]['dateTime'].toString()).year}',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.chevron_right,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
+                        ? WordCard(word: words[index])
                         : Container();
               },
             ),
