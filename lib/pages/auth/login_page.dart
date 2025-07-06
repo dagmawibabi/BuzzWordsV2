@@ -10,10 +10,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _firstnameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isSignUp = false;
 
   @override
   void dispose() {
@@ -53,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 160.0),
+                SizedBox(height: _isSignUp ? 80.0 : 160.0),
 
                 // Logo or App Name
                 const Text(
@@ -65,8 +69,8 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10.0),
-                const Text(
-                  'Sign in to continue',
+                Text(
+                  _isSignUp ? 'Sign up to continue' : 'Sign in to continue',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -75,12 +79,56 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 8.0),
 
+                // First Name Field
+                if (_isSignUp)
+                  TextFormField(
+                    controller: _firstnameController,
+                    decoration: InputDecoration(
+                      labelText: 'First Name',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your first name';
+                      }
+                      return null;
+                    },
+                  ),
+                if (_isSignUp) const SizedBox(height: 12.0),
+
+                // Last Name Field
+                if (_isSignUp)
+                  TextFormField(
+                    controller: _lastnameController,
+                    decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
+                  ),
+                if (_isSignUp) const SizedBox(height: 12.0),
+
                 // Username Field
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    labelText: 'Username or Email',
-                    prefixIcon: const Icon(Icons.person_outline),
+                    labelText: 'Username (eg: johndoe)',
+                    prefixIcon: const Icon(Icons.link),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -89,12 +137,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your username or email';
+                      return 'Please enter your username';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12.0),
 
                 // Password Field
                 TextFormField(
@@ -131,23 +179,47 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12.0),
+
+                // Email Field
+                if (_isSignUp)
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email... (eg: JohnDoe@gmail.com)',
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      return null;
+                    },
+                  ),
+                if (_isSignUp) const SizedBox(height: 12.0),
 
                 // Forgot Password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Colors.blue,
+                if (!_isSignUp)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          color: Colors.blue,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
+                if (!_isSignUp) const SizedBox(height: 24),
 
-                // Login Button
+                // Sign Up / Login Button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
@@ -167,8 +239,8 @@ class _LoginPageState extends State<LoginPage> {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text(
-                          'LOGIN',
+                      : Text(
+                          _isSignUp ? 'SIGNUP' : 'LOGIN',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -182,13 +254,19 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account?"),
+                    Text(
+                      _isSignUp
+                          ? "Already have an account?"
+                          : "Don't have an account?",
+                    ),
                     TextButton(
                       onPressed: () {
-                        // TODO: Navigate to sign up page
+                        setState(() {
+                          _isSignUp = !_isSignUp;
+                        });
                       },
-                      child: const Text(
-                        'Sign Up',
+                      child: Text(
+                        _isSignUp ? 'Sign In' : 'Sign Up',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
