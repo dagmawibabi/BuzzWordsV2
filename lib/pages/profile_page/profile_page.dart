@@ -1,5 +1,6 @@
 import 'package:bwv2/pages/auth/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,6 +12,30 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
+  Map<String, dynamic>? user = {
+    "firstName": "",
+    "lastName": "",
+    "username": "",
+    "email": "",
+    "role": "",
+    "createdAt": "",
+    "updatedAt": "",
+    "id": "",
+  };
+
+  void getUser() async {
+    final userBox = await Hive.openBox('userBox');
+    final user = await userBox.get("user");
+    setState(() {
+      this.user = user;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +54,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Henan Abebe',
+          Text(
+            '${user!['firstName']} ${user!['lastName']}',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          Text(
+            '@${user!['username']}',
+            style: TextStyle(),
           ),
           const SizedBox(height: 40),
           Card(

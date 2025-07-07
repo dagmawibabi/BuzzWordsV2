@@ -1,7 +1,10 @@
+import 'package:bwv2/pages/definition_page/definition_page.dart';
 import 'package:flutter/material.dart';
 
 class WordOfTheDay extends StatefulWidget {
-  const WordOfTheDay({super.key});
+  const WordOfTheDay({super.key, this.word});
+
+  final Map<String, dynamic>? word;
 
   @override
   State<WordOfTheDay> createState() => _WordOfTheDayState();
@@ -33,56 +36,74 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(
-                    top: 10.0,
-                    bottom: 15.0,
-                    left: 15.0,
-                    right: 15.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.yellowAccent.withAlpha(20),
-                    border: Border.all(
-                      width: 2.0,
-                      color: Colors.orangeAccent,
+                // Word
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DefinitionPage(word: widget.word!),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 15.0,
+                            left: 15.0,
+                            right: 15.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.yellowAccent.withAlpha(20),
+                            border: Border.all(
+                              width: 2.0,
+                              color: Colors.orangeAccent,
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.word?["word"],
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "By: ${widget.word?["username"]}",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                widget.word?["partOfSpeech"],
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                widget.word?["definition"],
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Serendipity",
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "[Ser-endi-pity]",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Text(
-                        "Noun",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "The occurrence of events by chance in a happy or beneficial way.",
-                        style: TextStyle(
-                          fontSize: 15.0,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ],
             ),

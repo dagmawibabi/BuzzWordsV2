@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:bwv2/utils/api_call.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SubmitPage extends StatefulWidget {
   const SubmitPage({super.key});
@@ -13,6 +15,17 @@ class _SubmitPageState extends State<SubmitPage> {
   final _definitionController = TextEditingController();
   final _antonymsController = TextEditingController();
   final _synonymsController = TextEditingController();
+  bool _isLoading = false;
+  Map<String, dynamic>? user = {
+    "firstName": "",
+    "lastName": "",
+    "username": "",
+    "email": "",
+    "role": "",
+    "createdAt": "",
+    "updatedAt": "",
+    "id": "",
+  };
 
   String? _selectedPartOfSpeech;
   final List<String> _partsOfSpeech = [
@@ -26,6 +39,80 @@ class _SubmitPageState extends State<SubmitPage> {
     'Interjection'
   ];
 
+  void getUser() async {
+    final userBox = await Hive.openBox('userBox');
+    final user = await userBox.get("user");
+    setState(() {
+      this.user = user;
+    });
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await APICall().post('submitWord/submit', {
+          'word': _wordController.text.toLowerCase().trim(),
+          'definition': _definitionController.text.toLowerCase().trim(),
+          'partOfSpeech': _selectedPartOfSpeech?.toLowerCase(),
+          'synonyms': _synonymsController.text
+              .toLowerCase()
+              .split(',')
+              .map((s) => s.trim())
+              .where((s) => s.isNotEmpty)
+              .toList(),
+          'antonyms': _antonymsController.text
+              .toLowerCase()
+              .split(',')
+              .map((s) => s.trim())
+              .where((s) => s.isNotEmpty)
+              .toList(),
+          'username': user!['username'],
+        });
+
+        if (!mounted) return;
+
+        if (response != null && response['success'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Word submitted successfully!')),
+          );
+          // Clear the form
+          _formKey.currentState?.reset();
+          setState(() {
+            _selectedPartOfSpeech = null;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response?['message'] ?? 'Failed to submit word'),
+            ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUser();
+  }
+
   @override
   void dispose() {
     _wordController.dispose();
@@ -33,13 +120,6 @@ class _SubmitPageState extends State<SubmitPage> {
     _antonymsController.dispose();
     _synonymsController.dispose();
     super.dispose();
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // Handle form submission logic
-      print("Submitted: ${_wordController.text}");
-    }
   }
 
   @override
@@ -97,13 +177,22 @@ class _SubmitPageState extends State<SubmitPage> {
                 ),
                 backgroundColor: Colors.black,
               ),
-              onPressed: _submitForm,
-              child: Text(
-                "Submit Word",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+              onPressed: _isLoading ? null : _submitForm,
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Submit Word',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ],
         ),

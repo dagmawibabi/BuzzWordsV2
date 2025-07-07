@@ -58,13 +58,13 @@ class _WordCardState extends State<WordCard> {
                     ),
                   ),
                   Text(
-                    'by: ${widget.word['submittedBy']}',
+                    'by: ${widget.word['username']}',
                     style: TextStyle(
                       fontSize: 12.0,
                     ),
                   ),
                   Text(
-                    '${DateTime.parse(widget.word['dateTime'].toString()).day} • ${DateTime.parse(widget.word['dateTime'].toString()).month} • ${DateTime.parse(widget.word['dateTime'].toString()).year}',
+                    '${DateTime.parse(widget.word['createdAt'].toString()).day} • ${DateTime.parse(widget.word['createdAt'].toString()).month} • ${DateTime.parse(widget.word['createdAt'].toString()).year}',
                     style: TextStyle(
                       fontSize: 12.0,
                     ),

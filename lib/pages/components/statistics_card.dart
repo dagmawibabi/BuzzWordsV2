@@ -20,7 +20,7 @@ class _StatisticsCardState extends State<StatisticsCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 140,
+      // width: 140,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: widget.color.withAlpha(15),

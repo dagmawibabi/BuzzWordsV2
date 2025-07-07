@@ -40,7 +40,7 @@ class _DefinitionPageState extends State<DefinitionPage> {
 
     // Definition
     final definition = Content.text(
-        "Explain This Word, Only tell me it's definition don't talk about anything else - make it slightly extensive and use markdown when highlighting somethings: ${widget.word['word']}");
+        "Explain This Word, Only tell me it's definition don't talk about anything else - make it slightly extensive and use markdown when highlighting somethings: ${widget.word}");
     var response = await chat.sendMessage(definition);
     aiDefinition = response.text;
     setState(() {});

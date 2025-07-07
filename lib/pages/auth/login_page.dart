@@ -1,5 +1,8 @@
+import 'package:bwv2/constants/env.dart';
 import 'package:bwv2/pages/parent_page/parent_page.dart';
+import 'package:bwv2/utils/api_call.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,23 +29,103 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      try {
+        final response = await APICall().post('auth/login', {
+          'username': _usernameController.text,
+          'password': _passwordController.text,
+        });
 
-      // Simulate API call
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() => _isLoading = false);
+        if (response["success"] == true) {
+          // Save user data to SharedPreferences
+          final userBox = await Hive.openBox('userBox');
+          userBox.put('user', response['user']);
+
+          final user = await userBox.get("userBox");
+          print(user);
+
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login successful!')),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ParentPage(),
+            ),
+          );
+        } else {
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed! ${response["message"]}')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ParentPage(),
-          ),
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
+  }
+
+  Future<void> _signup() async {
+    setState(() => _isLoading = true);
+    if (_formKey.currentState!.validate()) {
+      try {
+        final response = await APICall().post('auth/signup', {
+          'username': _usernameController.text,
+          'password': _passwordController.text,
+          "firstName": _firstnameController.text,
+          "lastName": _lastnameController.text,
+          "email": _emailController.text,
+        });
+
+        print(response);
+
+        if (response["success"] == true) {
+          // Save user data to SharedPreferences
+
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Signup successful!')),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ParentPage(),
+            ),
+          );
+        } else {
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Signup failed! ${response["message"]}')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
-      });
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
 
@@ -221,7 +304,11 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Sign Up / Login Button
                 ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
+                  onPressed: _isLoading
+                      ? null
+                      : _isSignUp
+                          ? _signup
+                          : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     disabledBackgroundColor: Colors.black,
