@@ -95,7 +95,8 @@ class _LoginPageState extends State<LoginPage> {
 
         if (response["success"] == true) {
           // Save user data to SharedPreferences
-
+          final userBox = await Hive.openBox('userBox');
+          userBox.put('user', response['user']);
           if (!mounted) return;
 
           ScaffoldMessenger.of(context).showSnackBar(

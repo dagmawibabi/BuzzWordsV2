@@ -121,7 +121,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     size: 16.0,
                     color: Colors.red,
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    final userBox = await Hive.openBox('userBox');
+                    userBox.delete('user');
+                    if (!mounted) return;
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
